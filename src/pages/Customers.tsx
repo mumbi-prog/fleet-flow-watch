@@ -25,7 +25,7 @@ export default function Customers() {
   });
 
   // Fetch customers
-  const { data: customers = [], isLoading } = useQuery({
+  const { data: customers = [], isLoading } = useQuery<Customer[]>({
     queryKey: ['customers'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,17 +39,17 @@ export default function Customers() {
 
   // Create/Update mutation
   const saveMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: { customer_name: string; status: 'active' | 'inactive' }) => {
       if (editingCustomer) {
         const { error } = await supabase
           .from('customers')
-          .update(data)
+          .update(data as never)
           .eq('customer_id', editingCustomer.customer_id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('customers')
-          .insert(data);
+          .insert(data as any);
         if (error) throw error;
       }
     },

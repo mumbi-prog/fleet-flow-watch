@@ -32,7 +32,7 @@ export default function FuelEntry() {
   });
 
   // Fetch dropdown data
-  const { data: trucks = [] } = useQuery({
+  const { data: trucks = [] } = useQuery<Array<{truck_id: string; truck_number: string}>>({
     queryKey: ['trucks-active'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -45,7 +45,7 @@ export default function FuelEntry() {
     },
   });
 
-  const { data: drivers = [] } = useQuery({
+  const { data: drivers = [] } = useQuery<Array<{driver_id: string; driver_name: string}>>({
     queryKey: ['drivers-active'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -58,7 +58,7 @@ export default function FuelEntry() {
     },
   });
 
-  const { data: customers = [] } = useQuery({
+  const { data: customers = [] } = useQuery<Array<{customer_id: string; customer_name: string}>>({
     queryKey: ['customers-active'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -72,7 +72,7 @@ export default function FuelEntry() {
   });
 
   // Fetch budgeted rate when truck is selected
-  const { data: budgetedRate } = useQuery({
+  const { data: budgetedRate } = useQuery<number | null>({
     queryKey: ['budgeted-rate', formData.truck_id, formData.date],
     queryFn: async () => {
       if (!formData.truck_id) return null;
@@ -87,13 +87,13 @@ export default function FuelEntry() {
         .single();
       
       if (error) return null;
-      return data?.budgeted_rate || null;
+      return (data as any)?.budgeted_rate || null;
     },
     enabled: !!formData.truck_id,
   });
 
   // Fetch last transaction for previous balance
-  const { data: lastTransaction } = useQuery({
+  const { data: lastTransaction } = useQuery<{balance: number} | null>({
     queryKey: ['last-transaction'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -140,7 +140,7 @@ export default function FuelEntry() {
         opening_pump: '',
         closing_pump: '',
         diesel_purchased: '0',
-        previous_balance: lastTransaction?.balance?.toString() || '0',
+        previous_balance: lastTransaction && lastTransaction.balance ? lastTransaction.balance.toString() : '0',
         physical_stocks: '',
         previous_km: '',
         current_km: '',
@@ -182,7 +182,7 @@ export default function FuelEntry() {
       opening_pump: parseFloat(formData.opening_pump),
       closing_pump: parseFloat(formData.closing_pump),
       diesel_purchased: parseFloat(formData.diesel_purchased),
-      previous_balance: lastTransaction?.balance || parseFloat(formData.previous_balance),
+      previous_balance: lastTransaction && lastTransaction.balance !== null && lastTransaction.balance !== undefined ? lastTransaction.balance : parseFloat(formData.previous_balance),
       physical_stocks: parseFloat(formData.physical_stocks),
       previous_km: parseInt(formData.previous_km),
       current_km: parseInt(formData.current_km),

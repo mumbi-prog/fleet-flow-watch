@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { format } from 'date-fns';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import type { FuelTransaction } from '@/types/database';
 
 export default function Dashboard() {
   // Fetch recent transactions
@@ -41,12 +42,14 @@ export default function Dashboard() {
 
       if (error) throw error;
 
-      const totalLitres = monthlyData?.reduce((sum, t) => sum + (t.litres_issued || 0), 0) || 0;
-      const totalKm = monthlyData?.reduce((sum, t) => sum + (t.km_covered || 0), 0) || 0;
-      const avgConsumption = monthlyData?.length 
-        ? monthlyData.reduce((sum, t) => sum + (t.consumption_rate || 0), 0) / monthlyData.length 
+      const transactions = monthlyData as Pick<FuelTransaction, 'litres_issued' | 'km_covered' | 'variance' | 'consumption_rate'>[] | null;
+      
+      const totalLitres = transactions?.reduce((sum, t) => sum + (t.litres_issued || 0), 0) || 0;
+      const totalKm = transactions?.reduce((sum, t) => sum + (t.km_covered || 0), 0) || 0;
+      const avgConsumption = transactions?.length 
+        ? transactions.reduce((sum, t) => sum + (t.consumption_rate || 0), 0) / transactions.length 
         : 0;
-      const totalVariance = monthlyData?.reduce((sum, t) => sum + Math.abs(t.variance || 0), 0) || 0;
+      const totalVariance = transactions?.reduce((sum, t) => sum + Math.abs(t.variance || 0), 0) || 0;
 
       return {
         totalLitres: totalLitres.toFixed(2),
@@ -69,7 +72,9 @@ export default function Dashboard() {
 
       if (error) throw error;
       
-      return data?.map(d => ({
+      const transactions = data as Pick<FuelTransaction, 'date' | 'consumption_rate' | 'budgeted_rate'>[] | null;
+      
+      return transactions?.map(d => ({
         date: format(new Date(d.date), 'MMM dd'),
         actual: parseFloat(d.consumption_rate?.toFixed(3) || '0'),
         budgeted: parseFloat(d.budgeted_rate?.toFixed(3) || '0'),

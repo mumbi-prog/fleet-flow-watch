@@ -26,7 +26,7 @@ export default function Drivers() {
   });
 
   // Fetch drivers
-  const { data: drivers = [], isLoading } = useQuery({
+  const { data: drivers = [], isLoading } = useQuery<Driver[]>({
     queryKey: ['drivers'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -40,17 +40,17 @@ export default function Drivers() {
 
   // Create/Update mutation
   const saveMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: { driver_name: string; license_no: string | null; status: 'active' | 'inactive' }) => {
       if (editingDriver) {
         const { error } = await supabase
           .from('drivers')
-          .update(data)
+          .update(data as never)
           .eq('driver_id', editingDriver.driver_id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('drivers')
-          .insert(data);
+          .insert(data as any);
         if (error) throw error;
       }
     },

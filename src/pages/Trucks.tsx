@@ -26,7 +26,7 @@ export default function Trucks() {
   });
 
   // Fetch trucks
-  const { data: trucks = [], isLoading } = useQuery({
+  const { data: trucks = [], isLoading } = useQuery<TruckType[]>({
     queryKey: ['trucks'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -40,17 +40,17 @@ export default function Trucks() {
 
   // Create/Update mutation
   const saveMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: { truck_number: string; capacity: number | null; status: 'active' | 'inactive' }) => {
       if (editingTruck) {
         const { error } = await supabase
           .from('trucks')
-          .update(data)
+          .update(data as never)
           .eq('truck_id', editingTruck.truck_id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('trucks')
-          .insert(data);
+          .insert(data as any);
         if (error) throw error;
       }
     },
