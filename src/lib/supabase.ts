@@ -1,14 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database-types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// For Lovable's native Supabase integration, environment variables are injected differently
+// Using window.location.origin as fallback for development
+const supabaseUrl = 'https://your-project.supabase.co'; // Replace with your Supabase URL
+const supabaseAnonKey = 'your-anon-key'; // Replace with your Supabase anon key
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
-
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+// Create a placeholder client that will be replaced when you add your Supabase credentials
+export const supabase = createClient<Database>(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-key'
+);
 
 // Auth helpers
 export const signUp = async (email: string, password: string, fullName: string) => {
