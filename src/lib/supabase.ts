@@ -3,14 +3,19 @@ import type { Database } from './database-types';
 
 // For Lovable's native Supabase integration, environment variables are injected differently
 // Using window.location.origin as fallback for development
-const supabaseUrl = 'https://your-project.supabase.co'; // Replace with your Supabase URL
-const supabaseAnonKey = 'your-anon-key'; // Replace with your Supabase anon key
+const supabaseUrl = 'https://oawyeiytpcyrztbdzhgn.supabase.co'; // Replace with your Supabase URL
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hd3llaXl0cGN5cnp0YmR6aGduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MTE0MTEsImV4cCI6MjA3Mjk4NzQxMX0.8w9ruMqA-GMvdsMfMagbsHAvCcPitdMFlI02kKO_4ps'; // Replace with your Supabase anon key
 
 // Create a placeholder client that will be replaced when you add your Supabase credentials
-export const supabase = createClient<Database>(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
+// export const supabase = createClient<Database>(
+//   supabaseUrl || 'https://placeholder.supabase.co',
+//   supabaseAnonKey || 'placeholder-key'
+// );
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseAnonKey
 );
+
 
 // Auth helpers
 export const signUp = async (email: string, password: string, fullName: string) => {
