@@ -69,48 +69,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  // const signUp = async (email: string, password: string, fullName: string) => {
-  //   const { data, error } = await supabase.auth.signUp({
-  //     email,
-  //     password,
-  //     options: {
-  //       data: {
-  //         full_name: fullName,
-  //       },
-  //     },
-  //   });
-  //   if (!error && data.user) {
-  //     await loadProfile();
-  //   }
-  //   return { error };
-  // };
-
-    const signUp = async (email: string, password: string, fullName: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName, 
-        },
+  const signUp = async (email: string, password: string, fullName: string) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName, 
       },
-    });
+    },
+  });
 
-    if (!error && data.user) {
-      const { error: profileError } = await supabase.from("profiles").insert([
-        { id: data.user.id, full_name: fullName }
-      ]);
-
-      if (profileError) {
-        console.error("Error inserting into profiles:", profileError.message);
-        return { error: profileError };
+  if (!error && data.user) {
+    const { error: profileError } = await supabase.from("profiles").insert([
+      { 
+        id: data.user.id, 
+        full_name: fullName, 
+        email, 
+        role: "user"
       }
+    ]);
 
-      await loadProfile(); 
+    if (profileError) {
+      console.error("Error inserting into profiles:", profileError.message);
+      return { error: profileError };
     }
 
-    return { error };
-  };
+    await loadProfile(); 
+  }
+
+  return { error };
+};
+
 
 
   const signOut = async () => {
